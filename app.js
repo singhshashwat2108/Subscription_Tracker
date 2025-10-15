@@ -9,6 +9,10 @@ import connecttodatabase from './databases/mongodb.js';
 
 const app= express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 app.use('/api/auths',authrouter);
 app.use('/api/users',userauth);
 app.use('/api/subs',subsauth);
@@ -20,7 +24,7 @@ app.get('/',(req ,res)=>{
 
 app.listen(PORT , async() => {
   console.log(`${process.env.PORT}`)
-  console.log(`server running on https://localhost:${PORT}`);
+  console.log(`server running on http://localhost:${PORT}`);
 
   await connecttodatabase();
 });

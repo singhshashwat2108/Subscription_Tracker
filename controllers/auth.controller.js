@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import user from '../models/user.model';
+import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken'
-import {Jwt_expires,Jwt_secret} from 'env.js';
+import {Jwt_expires,Jwt_secret} from '../config/env.js';
 
 
 export const signup = async (req ,res , next) =>{
@@ -13,7 +13,7 @@ export const signup = async (req ,res , next) =>{
     const{name , email, password} = req.body;
 
     //check if user exists
-    const existinguser = await user.findOne({email});
+    const existinguser = await User.findOne({email});
 
     if(existinguser){
       const error = new Error("user already exists");
@@ -25,9 +25,12 @@ export const signup = async (req ,res , next) =>{
     const salt = await bcrypt.genSalt(10);
     const hashpassword = await bcrypt.hash(password,salt);
 
-    const newuser = await user.create([{ name, email , hashpassword }], {session});
+    console.log("Incoming body:", req.body);
 
-    const token  = jwt.sign( { userId : newuser[0]._id}, Jwt_secret, {expiresin: Jwt_expires})
+
+    const newuser = await User.create([{ name, email , hashpassword }], {session});
+
+    const token  = jwt.sign( { userId : newuser[0]._id}, Jwt_secret, {expiresIn: Jwt_expires})
 
     await session.commitTransaction();
     session.endSession();
@@ -50,10 +53,43 @@ export const signup = async (req ,res , next) =>{
 
 }
 
-export const signout = async (req,res,next) =>{
+export const signin = async (req,res,next) =>{
+  try {
+    const {email, password} = req.body;
+
+    const user =await User.findOne({ email});
+
+    if(!user){
+      const error =new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+
+    }
+
+    const ispassword = await bcrypt.compare(password, user.password);
+    
+    if(!ispassword){
+      const error = new Error("invalis password");
+      error.statusCode= 401;
+      throw error;
+    }
+
+    const token = jwt.sign({userId: user.id} , Jwt_secret, {expiresIn: Jwt_expires});
+
+    res.status(200).json({
+      success:true,
+      message: 'user signed in successfully',
+      data:{
+        token,
+        user,
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
 
 }
 
-export const signin = async (req,res,next) =>{
+export const signout = async (req,res,next) =>{
 
 }

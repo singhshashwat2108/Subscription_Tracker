@@ -12,13 +12,13 @@ const userschema= new mongoose.Schema({
     type:String,
     required:[true,'email is required'],
     lowercase:true,
-    match:[/\s+@\s+\.\s+/,'please fill a valid email'],
+    match:[/^\S+@\S+\.\S+$/,'please fill a valid email'],
   },
   password:{
     type:String,
   }
-},{timestamp:true});
+},{timestamps:true});
 
-const user = mongoose.model('user',userschema);
+const User = mongoose.model('user',userschema);
 
-export default user;
+export default User;

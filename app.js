@@ -9,8 +9,8 @@ import connecttodatabase from './databases/mongodb.js';
 
 const app= express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json());                           //added for the express to read the data being sent from 
+app.use(express.urlencoded({ extended: true }));     //terminal as json 
 
 
 app.use('/api/auths',authrouter);

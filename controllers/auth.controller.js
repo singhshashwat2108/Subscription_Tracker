@@ -28,7 +28,7 @@ export const signup = async (req ,res , next) =>{
     console.log("Incoming body:", req.body);
 
 
-    const newuser = await User.create([{ name, email , hashpassword }], {session});
+    const newuser = await User.create([{ name, email ,password: hashpassword }], {session});
 
     const token  = jwt.sign( { userId : newuser[0]._id}, Jwt_secret, {expiresIn: Jwt_expires})
 
@@ -57,7 +57,7 @@ export const signin = async (req,res,next) =>{
   try {
     const {email, password} = req.body;
 
-    const user =await User.findOne({ email});
+    const user =await User.findOne({email});
 
     if(!user){
       const error =new Error('User not found');
@@ -90,6 +90,29 @@ export const signin = async (req,res,next) =>{
 
 }
 
-export const signout = async (req,res,next) =>{
+export const deleteuser = async (req,res,next) =>{
 
+  try{
+    const {email}= req.body;
+
+    const user= await User.findOne({email});
+
+    if(!user){
+      const error = new Error("user not available");
+      error.statusCode=404;
+      throw error;
+    }
+
+    await user.deleteOne();
+
+
+    res.status(200).json({
+      success:true,
+      message:"user successfully deleted"
+    })
+  }
+  catch(error){
+    next(error);
+
+  };
 }

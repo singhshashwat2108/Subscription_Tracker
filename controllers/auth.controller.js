@@ -68,7 +68,7 @@ export const signin = async (req,res,next) =>{
 
     const ispassword = await bcrypt.compare(password, user.password);
     
-    if(!ispassword){
+    if(!ispassword){                                   //**error handling of incorrect password is not working**
       const error = new Error("invalis password");
       error.statusCode= 401;
       throw error;

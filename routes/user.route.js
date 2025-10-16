@@ -1,8 +1,12 @@
 import {Router} from 'express';
 
+import {getusers,getuser} from '../controllers/user.controller.js';
+
 const userauth = Router();
 
-userauth.get('/:id',(req,res)=>res.send({message:'get user authentication'}));
+userauth.get('/',getusers);
+
+userauth.get('/:id',getuser);
 
 userauth.post('/send',(req,res)=> res.send({message:'send user auth'}));
 

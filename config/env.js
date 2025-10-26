@@ -7,4 +7,6 @@ export const {
   DB_URI, 
   NODE_ENV,
   Jwt_secret,
-  Jwt_expires} = process.env
+  Jwt_expires,
+  arcjet_env,
+  arcjet_key} = process.env
